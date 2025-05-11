@@ -3,22 +3,16 @@ import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
-import Link from "@mui/material/Link";
-import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
+import Grid from "@mui/material/Grid";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import handleSubmit from "@mui/material/styles/makeStyles";
-import { useUserAuth } from "../../context/UserAuthContext";
+import { useUserAuth } from "../../context/UserAuthContext"; // Adjust path if needed
 import { useNavigate } from "react-router-dom";
 import { RotatingLines } from "react-loader-spinner";
-// import { Form, Alert } from "react-bootstrap";
-// import GoogleButton from "react-google-button";
-// import { useUserAuth } from "../context/UserAuthContext";
+import GoogleButton from "react-google-button";
 
 const theme = createTheme();
 
@@ -28,11 +22,10 @@ function ANewUser() {
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const { adminLogIn } = useUserAuth();
-
+  const { adminLogIn, googleSignIn } = useUserAuth(); // context functions
   const navigate = useNavigate();
 
-  const handleLogIn = async (e) => {
+  const handleLogIn = async () => {
     setLoading(true);
     setError(false);
     try {
@@ -44,27 +37,21 @@ function ANewUser() {
     setLoading(false);
   };
 
+  const handleGoogleLogin = async () => {
+    setError(false);
+    try {
+      await googleSignIn();
+      navigate("/adhome");
+    } catch (error) {
+      console.error("Google login failed:", error);
+      setError(true);
+    }
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Grid
-        item
-        xs={false}
-        sm={4}
-        md={7}
-        sx={{
-          backgroundImage: "url(https://source.unsplash.com/random)",
-          backgroundRepeat: "no-repeat",
-          backgroundColor: (t) =>
-            t.palette.mode === "light"
-              ? t.palette.grey[50]
-              : t.palette.grey[900],
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
-      />
       <Container component="main" maxWidth="xs">
-        <CssBaseline />
         <Box
           sx={{
             marginTop: 8,
@@ -77,49 +64,36 @@ function ANewUser() {
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
-            Admin
+            Admin Login
           </Typography>
-          <Box
-            component="form"
-            onSubmit={handleSubmit}
-            noValidate
-            sx={{ mt: 1 }}
-          >
+          <Box component="form" noValidate onSubmit={(e) => e.preventDefault()} sx={{ mt: 1 }}>
             <TextField
               margin="normal"
               required
               fullWidth
-              id="email"
               label="Email Address"
-              name="email"
-              autoComplete="email"
-              autoFocus
+              type="email"
               onChange={(e) => setEmail(e.target.value)}
             />
             <TextField
               margin="normal"
               required
               fullWidth
-              name="password"
               label="Password"
               type="password"
-              id="password"
-              autoComplete="current-password"
               onChange={(e) => setPassword(e.target.value)}
             />
-            {/* <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
-            /> */}
+
             {error && (
-              <p style={{ color: "red" }}>
+              <Typography color="error" variant="body2" sx={{ mt: 1 }}>
                 Please enter correct login credentials
-              </p>
+              </Typography>
             )}
+
             {loading ? (
-              <div style={{ textAlign: "center" }}>
+              <Box sx={{ textAlign: "center", mt: 2 }}>
                 <RotatingLines width="30" />
-              </div>
+              </Box>
             ) : (
               <Button
                 type="button"
@@ -132,22 +106,18 @@ function ANewUser() {
               </Button>
             )}
 
-            {/* <Grid container>
-              <Grid item xs>
-                <Link href="#" variant="body2">
-                  Forgot password?
-                </Link>
-              </Grid>
-              <Grid item>
-                <Link href="#" variant="body2">
-                  {}
-                </Link>
-              </Grid>
-            </Grid> */}
+            <Box sx={{ textAlign: "center", mt: 2 }}>
+              <GoogleButton
+                label="Sign in with Google"
+                onClick={handleGoogleLogin}
+                style={{ width: "100%" }}
+              />
+            </Box>
           </Box>
         </Box>
       </Container>
     </ThemeProvider>
   );
 }
+
 export default ANewUser;
