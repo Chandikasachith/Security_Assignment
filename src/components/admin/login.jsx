@@ -41,7 +41,7 @@ function ANewUser() {
     setError(false);
     try {
       await googleSignIn();
-      navigate("/adhome");
+      //navigate("/adhome");
     } catch (error) {
       console.error("Google login failed:", error);
       setError(true);

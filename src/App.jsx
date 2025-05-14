@@ -142,13 +142,6 @@ function App() {
               path="/lakshaDetails/:docId"
               element={<LakshaDetails />}
             />
-
-
-
-
-
-
-
             <Route exact path="/alogin" element={<ANewUser />} />
             <Route
               exact
